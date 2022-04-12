@@ -1,17 +1,19 @@
-Outer_Width = 65.0;
-width = Outer_Width;
+Tray_Outer_Width = 65.0;
+width = Tray_Outer_Width;
 
-Outer_Length = 50.0;
-length = Outer_Length;
+Tray_Outer_Length = 50.0;
+length = Tray_Outer_Length;
 
-Outer_Height = 8.0;
-height = Outer_Height;
+Tray_Height = 8.0;
+height = Tray_Height;
 
-Corner_Radius = 5.0;
-radius = Corner_Radius;
+Tray_Corner_Radius = 5.0;
+radius = Tray_Corner_Radius;
 
-Wall_Thickness = 1.0;
-wall = Wall_Thickness;
+Tray_Wall_Thickness = 1.0;
+wall = Tray_Wall_Thickness;
+
+Tray_Floor_Thickness = 0.6;
 
 Large_Pipe_Diameter = 76.2;
 large = Large_Pipe_Diameter / 2; // convert to radius
@@ -113,7 +115,7 @@ module slots(where="positive") {
 		}
 
 		translate([0, 0, large+height])
-			cube([width*2, length*2, large*2], true);
+			cube([width, length*2, large*2], true);
 		translate([0, 0, -height/2])
 			cube([width, length, height], true);
 	}
@@ -124,7 +126,7 @@ module tray() {
 		linear_extrude(height)
 			perimeter();
 
-		translate([0, 0, wall])
+		translate([0, 0, Tray_Floor_Thickness])
 			linear_extrude(height)
 				offset(-wall)
 					perimeter();
