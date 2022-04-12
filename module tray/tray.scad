@@ -1,31 +1,31 @@
-Outer_Width = 65;
+Outer_Width = 65.0;
 width = Outer_Width;
 
-Outer_Length = 50;
+Outer_Length = 50.0;
 length = Outer_Length;
 
-Outer_Height = 8;
+Outer_Height = 8.0;
 height = Outer_Height;
 
-Corner_Radius = 5;
+Corner_Radius = 5.0;
 radius = Corner_Radius;
 
-Wall_Thickness = 1;
+Wall_Thickness = 1.0;
 wall = Wall_Thickness;
 
-Larger_Diameter = 76;
-large = Larger_Diameter / 2; // convert to radius
+Large_Pipe_Diameter = 76.2;
+large = Large_Pipe_Diameter / 2; // convert to radius
 
-Smaller_Diameter = 64;
-small = Smaller_Diameter / 2; // convert to radius
+Small_Pipe_Diameter = 63.5;
+small = Small_Pipe_Diameter / 2; // convert to radius
 
-Pipe_Thickness = 1.3;
-Wing_Distance = 5;
-Wing_Separation = 7;
-Wing_Angle = 30;
+Pipe_Wall_Thickness = 1.3;
+Wing_Distance = 5.0;
+Wing_Separation = 7.0;
+Wing_Angle = 30.0;
 Wing_Offset = length/2-Wing_Distance;
 
-Wire_Size = 2;
+Wire_Size = 2.1;
 
 Curve_Resolution = 1; // [1:High, 2:Medium, 4:Low]
 $fs = Curve_Resolution;
@@ -66,23 +66,23 @@ module arch(thickness, length, radius, additional_rotation=0) {
 
 module slot_positive() {
 	translate([wall*3, Wing_Offset+wall, 0]) {
-		arch(Pipe_Thickness+wall*2, width/2, small-wall); // Small Wing
+		arch(Pipe_Wall_Thickness+wall*2, width/2, small-wall); // Small Wing
 
-		translate([0, -Pipe_Thickness, 0]) {
-			arch(Wing_Separation, width/2, small+Pipe_Thickness); // Water Hole
+		translate([0, -Pipe_Wall_Thickness, 0]) {
+			arch(Wing_Separation, width/2, small+Pipe_Wall_Thickness); // Water Hole
 
 			translate([0, -Wing_Separation, 0])
-				arch(Pipe_Thickness+wall*2, width/2, large-wall); // Large Wing
+				arch(Pipe_Wall_Thickness+wall*2, width/2, large-wall); // Large Wing
 		}
 	}
 }
 module slot_negative() {
 	translate([wall*3+1, Wing_Offset, 0]) {
-		#arch(Pipe_Thickness, width/2+2, small); // Small Wing
+		#arch(Pipe_Wall_Thickness, width/2+2, small); // Small Wing
 
-		translate([0, -wall-Pipe_Thickness, 0]) {
+		translate([0, -wall-Pipe_Wall_Thickness, 0]) {
 			translate([0, wall-Wing_Separation, 0])
-				#arch(Pipe_Thickness, width/2+2, large); // Large Wing
+				#arch(Pipe_Wall_Thickness, width/2+2, large); // Large Wing
 		}
 	}
 }
@@ -95,10 +95,10 @@ module slot(where="positive") {
 		}
 	}
 	else { // if (where == "negative") {
-		translate([wall*2, Wing_Offset-wall-Pipe_Thickness, 0])
+		translate([wall*2, Wing_Offset-wall-Pipe_Wall_Thickness, 0])
 			arch(Wing_Separation-wall*2,
 				width/2-wall*2,
-				small+Pipe_Thickness+wall,
+				small+Pipe_Wall_Thickness+wall,
 				-1
 			);
 	}
