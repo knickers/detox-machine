@@ -129,9 +129,9 @@ module tray() {
 				offset(-wall)
 					perimeter();
 
-		translate([width/2-wall-1, 0, Wire_Size/2+wall])
-			rotate(90, [0,1,0])
-				cylinder(d=Wire_Size, h=wall+2);
+		translate([-width/2+wall+1, 0, Wire_Size/2+wall])
+			rotate(-90, [0,1,0])
+				cylinder(d=Wire_Size, h=wall+2, $fs=$fs*0.75);
 	}
 }
 
