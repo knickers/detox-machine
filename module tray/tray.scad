@@ -59,13 +59,13 @@ module arch(thickness, length, radius, additional_rotation=0) {
 			rotate(-90, [0,0,1])                         // Align with tray
 				rotate(90, [1,0,0])                      // Turn upright
 					rotate(additional_rotation, [0,0,1]) // Additional rotation
-						rotate_extrude(angle=35)         // Create body
+						rotate_extrude(angle=90)         // Create body
 							translate([radius, 0, 0])    // Arch radius
 								square([thickness, length]); // Arch shape
 }
 
 module slot_positive() {
-	translate([0, Wing_Offset+wall, 0]) {
+	translate([wall*3, Wing_Offset+wall, 0]) {
 		arch(Pipe_Thickness+wall*2, width/2, small-wall); // Small Wing
 
 		translate([0, -Pipe_Thickness, 0]) {
@@ -77,12 +77,12 @@ module slot_positive() {
 	}
 }
 module slot_negative() {
-	translate([wall, Wing_Offset, 0]) {
-		#arch(Pipe_Thickness, width/2, small); // Small Wing
+	translate([wall*3+1, Wing_Offset, 0]) {
+		#arch(Pipe_Thickness, width/2+2, small); // Small Wing
 
 		translate([0, -wall-Pipe_Thickness, 0]) {
 			translate([0, wall-Wing_Separation, 0])
-				#arch(Pipe_Thickness, width/2, large); // Large Wing
+				#arch(Pipe_Thickness, width/2+2, large); // Large Wing
 		}
 	}
 }
@@ -95,7 +95,7 @@ module slot(where="positive") {
 		}
 	}
 	else { // if (where == "negative") {
-		translate([-wall, Wing_Offset-wall-Pipe_Thickness, 0])
+		translate([wall*2, Wing_Offset-wall-Pipe_Thickness, 0])
 			arch(Wing_Separation-wall*2,
 				width/2-wall*2,
 				small+Pipe_Thickness+wall,
@@ -112,10 +112,10 @@ module slots(where="positive") {
 				slot(where);
 		}
 
-		translate([0, 0, height*1.5+height])
-			cube([width*2, length*2, height*3], true);
-		translate([0, 0, -height])
-			cube([width*2, length*2, height], true);
+		translate([0, 0, large+height])
+			cube([width*2, length*2, large*2], true);
+		translate([0, 0, -height/2])
+			cube([width, length, height], true);
 	}
 }
 
