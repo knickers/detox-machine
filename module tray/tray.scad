@@ -19,15 +19,15 @@ large = Larger_Diameter / 2; // convert to radius
 Smaller_Diameter = 64;
 small = Smaller_Diameter / 2; // convert to radius
 
-Pipe_Thickness = 2;
+Pipe_Thickness = 1.3;
 Wing_Distance = 5;
-Wing_Separation = 5;
-Wing_Angle = 0;
+Wing_Separation = 7;
+Wing_Angle = 30;
 Wing_Offset = length/2-Wing_Distance;
 
 Wire_Size = 2;
 
-Curve_Resolution = 2; // [1:High, 2:Medium, 4:Low]
+Curve_Resolution = 1; // [1:High, 2:Medium, 4:Low]
 $fs = Curve_Resolution;
 $fa = 0.01 + 0;
 
