@@ -94,14 +94,9 @@ module slot_positive() {
 				// Small wing
 				arch(Pipe_Wall_Thickness+wall*2, width/2, small-wall, height-1, 30);
 
-				// Passthrough hole
-				translate([0, -Pipe_Wall_Thickness, 0]) {
-					//#arch(Wing_Separation, width/2, small+Pipe_Wall_Thickness, height, 30);
-
-					// Large wing
-					translate([0, -Wing_Separation, 0])
-						arch(Pipe_Wall_Thickness+wall*2, width/2, large-wall, height-1, 30);
-				}
+				// Large wing
+				translate([0, -Pipe_Wall_Thickness-Wing_Separation, 0])
+					arch(Pipe_Wall_Thickness+wall*2, width/2, large-wall, height-1, 30);
 			}
 
 			translate([wall*3-1, 0, 0])
