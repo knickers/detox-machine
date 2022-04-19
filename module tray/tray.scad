@@ -17,15 +17,21 @@ Tray_Floor_Thickness = 0.6;
 
 Large_Pipe_Diameter = 76.2;
 large = Large_Pipe_Diameter / 2; // convert to radius
+Large_Pipe_Angle = 30;
 
 Small_Pipe_Diameter = 63.5;
 small = Small_Pipe_Diameter / 2; // convert to radius
+Small_Pipe_Angle = 32;
 
 Pipe_Wall_Thickness = 1.3;
 Wing_Distance = 5.0;
 Wing_Separation = 7.0;
 Wing_Angle = 30.0;
 Wing_Offset = length/2-Wing_Distance;
+
+Slot_Distance = 5;
+Slot_Length = 40;
+Slot_Offset = Slot_Length + Slot_Distance - width/2;
 
 Wire_Size = 2.1;
 
@@ -61,8 +67,8 @@ else if (part == "Combined") {
 	}
 }
 
-module arch(thickness, length, radius, cutoff, angle=90, additional_rotation=0){
-	rotate(Wing_Angle, [1,0,0])                          // Rotate to wing angle
+module arch(thickness, length, radius, cutoff, rotation, angle=90, additional_rotation=0){
+	rotate(rotation, [1,0,0])                          // Rotate to wing angle
 		translate([0, radius, 0])                        // Move to origin
 			rotate(-90, [0,0,1])                         // Align with tray
 				rotate(90, [1,0,0])                      // Turn upright
@@ -90,60 +96,83 @@ module slot_plug() {
 module slot_positive() {
 	difference() {
 		union() {
-			translate([wall*3, Wing_Offset+wall, 0]) {
+			translate([Slot_Offset, Wing_Offset+wall, 0]) {
 				// Small wing
-				arch(Pipe_Wall_Thickness+wall*2, width/2, small-wall, height-1, 30);
+				arch(Pipe_Wall_Thickness+wall*2,
+					Slot_Length,
+					small-wall,
+					height-1,
+					Small_Pipe_Angle,
+					30 // arch arc
+				);
 
 				// Large wing
 				translate([0, -Pipe_Wall_Thickness-Wing_Separation, 0])
-					arch(Pipe_Wall_Thickness+wall*2, width/2, large-wall, height-1, 30);
+					arch(Pipe_Wall_Thickness+wall*2,
+						Slot_Length,
+						large-wall,
+						height-1,
+						Large_Pipe_Angle,
+						30
+					);
 			}
 
-			translate([wall*3-1, 0, 0])
+			translate([Slot_Offset-1, 0, 0])
 				slot_plug();
 
-			translate([wall*4-1-width/2, 0, 0])
+			translate([Slot_Offset+wall-1-Slot_Length, 0, 0])
 				slot_plug();
 		}
 
 		// Level off the top
-		translate([wall*3-width/2-1, 0, height+1])
-			cube([width/2+2, length/2, large ]);
+		translate([Slot_Distance-width/2-1, 0, height+1])
+			cube([Slot_Length+2, length/2, large ]);
 
 		l = tan(Wing_Angle) * (height-1.5);
 
 		// Cut off the top outside corner
-		translate([wall*3-width/2-1, length/2-Wing_Distance-l, height-2])
-			cube([width/2+2, Pipe_Wall_Thickness*3, 4]);
+		translate([Slot_Distance-width/2-1, length/2-Wing_Distance-l, height-2])
+			cube([Slot_Length+2, Pipe_Wall_Thickness*3, 4]);
 
 		// Cut off the top inside corner
 		translate([
-			wall*3-width/2-1,
+			Slot_Distance-width/2-1,
 			length/2-Wing_Distance-Wing_Separation-Pipe_Wall_Thickness*5.2-l,
 			height-2
 		])
-			cube([width/2+2, Pipe_Wall_Thickness*4, 4]);
+			cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
 
 		// Flatten the bottom of the arches
 		translate([
-			wall*3-width/2-1,
+			Slot_Distance-width/2-1,
 			length/2-Pipe_Wall_Thickness*2-Wing_Distance-Wing_Separation-wall*2,
 			-Pipe_Wall_Thickness*2
 		])
 			cube([
-				width/2+2,
+				Slot_Length+2,
 				Pipe_Wall_Thickness*2 + Wing_Separation + wall*4,
 				Pipe_Wall_Thickness*2
 			]);
 	}
 }
 module slot_negative() {
-	translate([wall*3+1, Wing_Offset, 0]) {
-		#arch(Pipe_Wall_Thickness, width/2+2, small, Small_Pipe_Diameter); // Small Wing
+	translate([Slot_Offset+1, Wing_Offset, 0]) {
+		// Small Wing
+		#arch(Pipe_Wall_Thickness,
+			Slot_Length+2,
+			small,
+			Small_Pipe_Diameter,
+			Small_Pipe_Angle
+		);
 
-		translate([0, -wall-Pipe_Wall_Thickness, 0]) {
-			translate([0, wall-Wing_Separation, 0])
-				#arch(Pipe_Wall_Thickness, width/2+2, large, Large_Pipe_Diameter); // Large Wing
+		translate([0, -Pipe_Wall_Thickness-Wing_Separation, 0]) {
+			// Large Wing
+			#arch(Pipe_Wall_Thickness,
+				Slot_Length+2,
+				large,
+				Large_Pipe_Diameter,
+				Large_Pipe_Angle
+			);
 		}
 	}
 }
@@ -156,11 +185,12 @@ module slot(where="positive") {
 		}
 	}
 	else { // if (where == "negative") {
-		translate([wall*2, Wing_Offset-wall-Pipe_Wall_Thickness, 0])
+		translate([Slot_Offset-wall, Wing_Offset-wall-Pipe_Wall_Thickness, 0])
 			arch(Wing_Separation-wall*2.75,
-				width/2-wall*2,
+				Slot_Length-wall*2,
 				small+Pipe_Wall_Thickness+wall,
 				large,
+				Small_Pipe_Angle+(Large_Pipe_Angle-Small_Pipe_Angle)/2,
 				90,
 				-1
 			);
