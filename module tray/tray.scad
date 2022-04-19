@@ -26,7 +26,6 @@ Small_Pipe_Angle = 32;
 Pipe_Wall_Thickness = 1.3;
 Wing_Distance = 5.0;
 Wing_Separation = 7.0;
-Wing_Angle = 30.0;
 Wing_Offset = length/2-Wing_Distance;
 
 Slot_Distance = 5;
@@ -51,20 +50,11 @@ else if (part == "Slot") {
 	}
 }
 else if (part == "Slots") {
-	difference() {
-		slots("positive");
-		slots("negative");
-	}
+	slots();
 }
 else if (part == "Combined") {
-	difference() {
-		union() {
-			tray();
-			slots("positive");
-		}
-
-		slots("negative");
-	}
+	tray();
+	slots();
 }
 
 module arch(thickness, length, radius, cutoff, rotation, angle=90, additional_rotation=0){
@@ -80,14 +70,15 @@ module arch(thickness, length, radius, cutoff, rotation, angle=90, additional_ro
 
 module slot_plug() {
 	w = Wing_Separation + Pipe_Wall_Thickness*2 + wall*6;
-	x = tan(Wing_Angle) * (height+1) - 1.5;
+	s = tan(Small_Pipe_Angle) * (height+1) - 1.5;
+	l = tan(Large_Pipe_Angle) * (height+1) - 1.5;
 	translate([0, length/2-w-Wing_Distance+wall*2.5, 0])
 		rotate(90, [0,0,1])
 			rotate(90, [1,0,0])
 				linear_extrude(wall)
 					polygon([
-						[w-x, height+1], // Q1
-						[0-x, height+1], // Q2
+						[w-s, height+1], // Q1
+						[0-l, height+1], // Q2
 						[0, 0], // Q3
 						[w, 0]  // Q4
 					]);
@@ -128,17 +119,25 @@ module slot_positive() {
 		translate([Slot_Distance-width/2-1, 0, height+1])
 			cube([Slot_Length+2, length/2, large ]);
 
-		l = tan(Wing_Angle) * (height-1.5);
+		l = tan(Small_Pipe_Angle) * (height-1.5);
 
 		// Cut off the top outside corner
-		translate([Slot_Distance-width/2-1, length/2-Wing_Distance-l, height-2])
-			cube([Slot_Length+2, Pipe_Wall_Thickness*3, 4]);
+		multmatrix(m=[
+			[1, 0, 0,                          Slot_Distance-width/2-1],
+			[0, 1, -cos(Small_Pipe_Angle*1.5), length/2-Wing_Distance-l+1],
+			[0, 0, 1,                          height-2],
+			[0, 0, 0,                          1],
+		])
+			cube([Slot_Length+2, wall*5, 4]);
+
+		L = tan(Large_Pipe_Angle) * (height-1.5);
 
 		// Cut off the top inside corner
-		translate([
-			Slot_Distance-width/2-1,
-			length/2-Wing_Distance-Wing_Separation-Pipe_Wall_Thickness*5.2-l,
-			height-2
+		multmatrix(m=[
+			[1, 0, 0,                          Slot_Distance-width/2-1],
+			[0, 1, -cos(Small_Pipe_Angle*1.5), length/2-Wing_Distance-Wing_Separation-Pipe_Wall_Thickness*5.2-L+1],
+			[0, 0, 1,                          height-2],
+			[0, 0, 0,                          1],
 		])
 			cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
 
@@ -177,30 +176,29 @@ module slot_negative() {
 	}
 }
 
-module slot(where="positive") {
-	if (where == "positive") {
-		difference() {
-			slot_positive();
-			slot_negative();
-		}
-	}
-	else { // if (where == "negative") {
-		translate([Slot_Offset-wall, Wing_Offset-wall-Pipe_Wall_Thickness, 0])
-			arch(Wing_Separation-wall*2.75,
-				Slot_Length-wall*2,
-				small+Pipe_Wall_Thickness+wall,
-				large,
-				Small_Pipe_Angle+(Large_Pipe_Angle-Small_Pipe_Angle)/2,
-				90,
-				-1
-			);
+module slot() {
+	difference() {
+		slot_positive();
+		slot_negative();
 	}
 }
 
-module slots(where="positive") {
-	slot(where);
+module slots() {
+	slot();
 	mirror([0,1,0])
-		slot(where);
+		slot();
+}
+
+module slot_cutout() {
+	translate([Slot_Offset-wall, Wing_Offset-wall-Pipe_Wall_Thickness, 0])
+		arch(Wing_Separation-wall*2.75,
+			Slot_Length-wall*2,
+			small+Pipe_Wall_Thickness+wall,
+			large,
+			Small_Pipe_Angle+(Large_Pipe_Angle-Small_Pipe_Angle)/2+2,
+			30,
+			-1
+		);
 }
 
 module tray() {
@@ -208,14 +206,21 @@ module tray() {
 		linear_extrude(height)
 			perimeter();
 
+		// Cutout the main tray cavity
 		translate([0, 0, Tray_Floor_Thickness])
 			linear_extrude(height)
 				offset(-wall)
 					perimeter();
 
+		// The wire hole
 		translate([-width/2+wall+1, 0, Wire_Size/2+Tray_Floor_Thickness])
 			rotate(-90, [0,1,0])
 				cylinder(d=Wire_Size, h=wall+2, $fs=$fs*0.65);
+
+		// Slot cutouts
+		slot_cutout();
+		mirror([0,1,0])
+			slot_cutout();
 	}
 }
 
