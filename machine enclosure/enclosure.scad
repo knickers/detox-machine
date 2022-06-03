@@ -110,11 +110,41 @@ module body(height, chamfer_size, offset=0) {
 	main_shape(height-chamfer_size, offset);
 }
 
+module arch(radius, length) {
+	difference() {
+		translate([0, -radius-1, 0])
+			cube([radius+1, radius+1, length]);
+		cylinder(r=radius, h=length, $fs=$fs/2);
+	}
+}
+
+module fillet() {
+	R = wall*0.9;
+
+	// Right Side
+	translate([width/2-R, depth/2, R])
+		rotate(90, [1,0,0])
+			arch(R, depth);
+
+	// Left Side
+	translate([-width/2+R, depth/2, R])
+		rotate(90, [1,0,0])
+			rotate(-90, [0,0,1])
+				arch(R, depth);
+
+	// Front Side
+	translate([-width/2+R, depth/2, R])
+		rotate(90, [1,0,0])
+			rotate(90, [0,0,1])
+				#arch(R, depth);
+}
+
 module top() {
 	difference() {
 		body(height, Chamfer_Size);
 		translate([0, 0, -wall])
 			body(height, Chamfer_Size-wall*4/5, -wall);
+		fillet();
 	}
 }
 
