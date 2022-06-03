@@ -1,10 +1,10 @@
 // Resolution
 $fs = 2; // [1:High, 2:Medium, 4:Low]
 $fa = 0.01 + 0;
+e = 0.005 + 0;
 
 part = "Bottom"; // [Combined, Separated, Top, Bottom]
-
-/* [Encolsure Case] */
+clip = "None"; // [None, Right, Left, Front, Back]
 
 // Outer Width
 width = 140; // [50:1:200]
@@ -23,29 +23,46 @@ Draft_Angle = 8.53; // [0:0.01:22.5]
 // Wall Thickness
 wall = 2; // [1:0.5:5]
 
+
+/* [Encolsure Case] */
 /* [Encolsure Bottom] */
 
 
 
 
-if (part == "Combined") {
-	difference() {
-		union() {
+difference() {
+	if (part == "Combined") {
+		difference() {
+			union() {
+			}
+			cube(width);
 		}
-		cube(width);
 	}
-}
-else if (part == "Separated") {
-}
-else if (part == "Top") {
-	difference() {
-		top();
-		translate([0, -depth, -1])
-			cube([width, depth*2, height+2]);
+	else if (part == "Separated") {
 	}
-}
-else if (part == "Bottom") {
-	bottom();
+	else if (part == "Top") {
+			top();
+	}
+	else if (part == "Bottom") {
+		bottom();
+	}
+
+	if (clip == "Right") {
+		translate([0, -depth/2-1, -1])
+			cube([width/2+1, depth+2, height+2]);
+	}
+	else if (clip == "Left") {
+		translate([-width/2-1, -depth/2-1, -1])
+			cube([width/2+1, depth+2, height+2]);
+	}
+	else if (clip == "Front") {
+		translate([-width/2-1, -depth/2-1, -1])
+			cube([width+2, depth/2+1, height+2]);
+	}
+	else if (clip == "Back") {
+		translate([-width/2-1, 0, -1])
+			cube([width+2, depth/2+1, height+2]);
+	}
 }
 
 module perimeter() {
@@ -64,23 +81,6 @@ module perimeter() {
 	}
 }
 
-module angled_chamfer(chamfer_size, offset=0) {
-	/*
-	*/
-	translate([0, depth/2, 0])
-		rotate(Draft_Angle, [1,0,0])
-			translate([0, -depth/2, 0])
-				linear_extrude(chamfer_size, scale=[
-					(width-chamfer_size*2)/width,
-					(depth-chamfer_size*2)/depth
-				])
-					translate([0, depth/2, 0])
-						projection(cut=true)
-							rotate(-Draft_Angle, [1,0,0])
-								translate([0, -depth/2, -height+1])
-									main_shape(height, offset);
-}
-
 module main_shape(height, offset=0) {
 	difference() {
 		linear_extrude(height)
@@ -93,44 +93,28 @@ module main_shape(height, offset=0) {
 	}
 }
 
+module body(height, chamfer_size, offset=0) {
+	translate([0, depth/2, height-chamfer_size-e])
+		rotate(Draft_Angle, [1,0,0])
+			translate([0, -depth/2, 0])
+				linear_extrude(chamfer_size, scale=[
+					(width-chamfer_size*2)/width,
+					(depth-chamfer_size*2)/depth
+				])
+					translate([0, depth/2, 0])
+						projection(cut=true)
+							rotate(-Draft_Angle, [1,0,0])
+								translate([0, -depth/2, -height+1])
+									main_shape(height, offset);
+
+	main_shape(height-chamfer_size, offset);
+}
+
 module top() {
-	/*
 	difference() {
-		linear_extrude(height)
-			difference() {
-				perimeter();
-				offset(-wall)
-					perimeter();
-			}
-	}
-	*/
-	/*
-	difference() {
-		union() {
-			translate([0, 0, height-Chamfer_Size])
-				angled_chamfer(Chamfer_Size);
-			main_shape(height-Chamfer_Size);
-		}
-		translate([0, 0, height-Chamfer_Size])
-			angled_chamfer(Chamfer_Size-wall, -wall);
-		main_shape(height-Chamfer_Size, -wall);
-	}
-	*/
-	difference() {
-		union() {
-			translate([0, 0, height-Chamfer_Size])
-				angled_chamfer(Chamfer_Size);
-			main_shape(height-Chamfer_Size);
-		}
-		scale([
-			(width-wall*1)/width,
-			(depth-wall*2)/depth,
-			(height-wall)/height
-		]) {
-			translate([0, 0, height-Chamfer_Size])
-				angled_chamfer(Chamfer_Size);
-			main_shape(height-Chamfer_Size);
-		}
+		body(height, Chamfer_Size);
+		translate([0, 0, -wall])
+			body(height, Chamfer_Size-wall*4/5, -wall);
 	}
 }
 
