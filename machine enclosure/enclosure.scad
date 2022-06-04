@@ -199,7 +199,7 @@ module switch() {
 	translate([-Switch_Clasp_Width/2, -Switch_Clasp_Depth-Switch_Diameter/2, 0])
 		cube([
 			Switch_Clasp_Width,
-			Switch_Clasp_Depth*2+Switch_Diameter,
+			Switch_Clasp_Depth*2 + Switch_Diameter,
 			Wall_Thickness+2
 		]);
 
@@ -207,6 +207,26 @@ module switch() {
 		cube([
 			Switch_Key_Depth*2,
 			Switch_Key_Width,
+			Wall_Thickness+2
+		]);
+}
+
+module meter() {
+	translate([-Meter_Width/2, -Meter_Depth/2, 0])
+		cube([
+			Meter_Width,
+			Meter_Depth,
+			Wall_Thickness+2
+		]);
+
+	translate([
+		-Meter_Clasp_Width/2,
+		-Meter_Clasp_Depth - Meter_Depth/2,
+		0
+	])
+		cube([
+			Meter_Clasp_Width,
+			Meter_Clasp_Depth*2 + Meter_Depth,
 			Wall_Thickness+2
 		]);
 }
@@ -222,6 +242,8 @@ module face() {
 					switch();
 				translate([-sx, -sy, 0])
 					switch();
+				translate([0, Depth/2-Meter_Depth*0.75-Chamfer_Size, 0])
+					meter();
 			}
 }
 
