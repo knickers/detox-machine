@@ -117,6 +117,17 @@ module arch(radius, length) {
 		cylinder(r=radius, h=length, $fs=$fs/2);
 	}
 }
+module arc(r1, r2) {
+	difference() {
+		translate([0, 0, -r1-1])
+			cube([r1+r2, r1+r2, r1+1]);
+		rotate_extrude(angle=90, convexity=4)
+			translate([r2, 0, 0])
+				circle(r=r1, $fs=$fs/2);
+		translate([0, 0, -r1-2])
+			cylinder(r=r2, h=r1+3);
+	}
+}
 
 module fillet() {
 	R = wall*0.9;
@@ -133,10 +144,34 @@ module fillet() {
 				arch(R, depth);
 
 	// Front Side
-	translate([-width/2+R, depth/2, R])
-		rotate(90, [1,0,0])
+	translate([-width/2, -depth/2+R, R])
+		rotate(90, [0,1,0])
+			arch(R, width);
+
+	// Back Side
+	translate([-width/2, depth/2-R, R])
+		rotate(90, [0,1,0])
 			rotate(90, [0,0,1])
-				#arch(R, depth);
+				arch(R, width);
+
+	// Q1
+	translate([width/2-Back_Radius, depth/2-Back_Radius, R])
+		arc(R, Back_Radius-R);
+
+	// Q2
+	translate([-width/2+Back_Radius, depth/2-Back_Radius, R])
+		rotate(90, [0,0,1])
+			arc(R, Back_Radius-R);
+
+	// Q3
+	translate([-width/2+Front_Radius, -depth/2+Front_Radius, R])
+		rotate(180, [0,0,1])
+			arc(R, Front_Radius-R);
+
+	// Q4
+	translate([width/2-Front_Radius, -depth/2+Front_Radius, R])
+		rotate(-90, [0,0,1])
+			arc(R, Front_Radius-R);
 }
 
 module top() {
