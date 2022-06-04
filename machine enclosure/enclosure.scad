@@ -84,6 +84,35 @@ difference() {
 	}
 }
 
+module top() {
+	difference() {
+		body(Height, Chamfer_Size);
+		translate([0, 0, -Wall_Thickness])
+			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
+
+		if (!$preview)
+			fillet();
+
+		face();
+
+		// Jacks
+		x = Width/4 - Back_Radius/2;
+		translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
+			rotate(90, [1,0,0]) {
+				translate([x, 0, 0])
+					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
+				translate([-x, 0, 0])
+					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
+			}
+	}
+}
+
+module bottom() {
+	linear_extrude(Wall_Thickness)
+		offset(-Wall_Thickness)
+			perimeter();
+}
+
 module perimeter() {
 	hull() {
 		translate([-Width/2+Back_Radius, +Depth/2-Back_Radius, 0])
@@ -100,18 +129,6 @@ module perimeter() {
 	}
 }
 
-module main_shape(height, offset=0) {
-	difference() {
-		linear_extrude(height)
-			offset(offset)
-				perimeter();
-		translate([0, Depth/2, height])
-			rotate(Draft_Angle, [1,0,0])
-				translate([0, -Depth/2, height/2])
-					cube([Width+2, Depth*1.5, height], center=true);
-	}
-}
-
 module body(height, chamfer_size, offset=0) {
 	translate([0, Depth/2, height-chamfer_size-e])
 		rotate(Draft_Angle, [1,0,0])
@@ -124,9 +141,19 @@ module body(height, chamfer_size, offset=0) {
 						projection(cut=true)
 							rotate(-Draft_Angle, [1,0,0])
 								translate([0, -Depth/2, -height+1])
-									main_shape(height, offset);
+									linear_extrude(height)
+										offset(offset)
+											perimeter();
 
-	main_shape(height-chamfer_size, offset);
+	difference() {
+		linear_extrude(height-chamfer_size)
+			offset(offset)
+				perimeter();
+		translate([0, Depth/2, height-chamfer_size])
+			rotate(Draft_Angle, [1,0,0])
+				translate([0, -Depth/2, chamfer_size])
+					cube([Width+2, Depth*1.5, chamfer_size*2], center=true);
+	}
 }
 
 module arch(radius, length) {
@@ -245,33 +272,4 @@ module face() {
 				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
 			}
-}
-
-module top() {
-	difference() {
-		body(Height, Chamfer_Size);
-		translate([0, 0, -Wall_Thickness])
-			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
-
-		if (!$preview)
-			fillet();
-
-		face();
-
-		// Jacks
-		x = Width/4 - Back_Radius/2;
-		translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
-			rotate(90, [1,0,0]) {
-				translate([x, 0, 0])
-					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
-				translate([-x, 0, 0])
-					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
-			}
-	}
-}
-
-module bottom() {
-	linear_extrude(Wall_Thickness)
-		offset(-Wall_Thickness)
-			perimeter();
 }
