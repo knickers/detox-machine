@@ -3,9 +3,11 @@ $fs = 2; // [1:High, 2:Medium, 4:Low]
 $fa = 0.01 + 0;
 e = 0.005 + 0;
 
-part = "Bottom"; // [Combined, Separated, Top, Bottom]
-clip = "None"; // [None, Right, Left, Front, Back]
+Part = "Top"; // [Combined, Separated, Top, Bottom]
+Clipping_Plane = "None"; // [None, Right, Left, Front, Back]
 
+
+/* [Enclosure] */
 Width = 140;
 Depth = 100;
 Height = 40;
@@ -23,18 +25,22 @@ Switch_Key_Depth = 1.25;
 Switch_Clasp_Width = 4.25;
 Switch_Clasp_Depth = 2.00;
 
+
 /* [Meter] */
 Meter_Width = 45.50;
 Meter_Depth = 26.50;
 Meter_Clasp_Width = 25.00;
 Meter_Clasp_Depth = 0.50;
 
+
 /* [Jack] */
 Jack_Diameter = 11.25;
+
 
 /* [Text] */
 Text_Depth = 1.00;
 Text_Height = 6.00;
+
 
 /* [Latch] */
 Latch_Width = 4.00;
@@ -44,35 +50,35 @@ Latch_Depth = 1.00;
 
 
 difference() {
-	if (part == "Combined") {
+	if (Part == "Combined") {
 		difference() {
 			union() {
 			}
 			cube(Width);
 		}
 	}
-	else if (part == "Separated") {
+	else if (Part == "Separated") {
 	}
-	else if (part == "Top") {
+	else if (Part == "Top") {
 			top();
 	}
-	else if (part == "Bottom") {
+	else if (Part == "Bottom") {
 		bottom();
 	}
 
-	if (clip == "Right") {
+	if (Clipping_Plane == "Right") {
 		translate([0, -Depth/2-1, -1])
 			cube([Width/2+1, Depth+2, Height+2]);
 	}
-	else if (clip == "Left") {
+	else if (Clipping_Plane == "Left") {
 		translate([-Width/2-1, -Depth/2-1, -1])
 			cube([Width/2+1, Depth+2, Height+2]);
 	}
-	else if (clip == "Front") {
+	else if (Clipping_Plane == "Front") {
 		translate([-Width/2-1, -Depth/2-1, -1])
 			cube([Width+2, Depth/2+1, Height+2]);
 	}
-	else if (clip == "Back") {
+	else if (Clipping_Plane == "Back") {
 		translate([-Width/2-1, 0, -1])
 			cube([Width+2, Depth/2+1, Height+2]);
 	}
@@ -187,8 +193,36 @@ module fillet() {
 			arc(R, Front_Radius-R);
 }
 
+module switch() {
+	cylinder(d=Switch_Diameter, h=Wall_Thickness+2);
+
+	translate([-Switch_Clasp_Width/2, -Switch_Clasp_Depth-Switch_Diameter/2, 0])
+		cube([
+			Switch_Clasp_Width,
+			Switch_Clasp_Depth*2+Switch_Diameter,
+			Wall_Thickness+2
+		]);
+
+	translate([-Switch_Key_Depth-Switch_Diameter/2, -Switch_Key_Width/2, 0])
+		cube([
+			Switch_Key_Depth*2,
+			Switch_Key_Width,
+			Wall_Thickness+2
+		]);
+}
+
 module face() {
-	
+	sx = Width/2 - Front_Radius*0.75 - Wall_Thickness;
+	sy = Depth/2 - Front_Radius + Wall_Thickness;
+
+	translate([0, Depth/2, Height-Wall_Thickness])
+		rotate(Draft_Angle, [1,0,0])
+			translate([0, -Depth/2, -1]) {
+				translate([sx, -sy, 0])
+					switch();
+				translate([-sx, -sy, 0])
+					switch();
+			}
 }
 
 module top() {
@@ -198,6 +232,7 @@ module top() {
 			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
 		if (!$preview)
 			fillet();
+		face();
 	}
 }
 
