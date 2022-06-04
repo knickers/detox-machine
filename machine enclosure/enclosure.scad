@@ -252,9 +252,21 @@ module top() {
 		body(Height, Chamfer_Size);
 		translate([0, 0, -Wall_Thickness])
 			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
+
 		if (!$preview)
 			fillet();
+
 		face();
+
+		// Jacks
+		x = Width/4 - Back_Radius/2;
+		translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
+			rotate(90, [1,0,0]) {
+				translate([x, 0, 0])
+					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
+				translate([-x, 0, 0])
+					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
+			}
 	}
 }
 
