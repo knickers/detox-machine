@@ -232,15 +232,15 @@ module meter() {
 }
 
 module face() {
-	sx = Width/2 - Front_Radius*0.75 - Wall_Thickness;
-	sy = Depth/2 - Front_Radius + Wall_Thickness;
+	x = Width/2 - Wall_Thickness - Front_Radius*0.75;
+	y = Depth/2 + Wall_Thickness - Front_Radius;
 
 	translate([0, Depth/2, Height-Wall_Thickness])
 		rotate(Draft_Angle, [1,0,0])
 			translate([0, -Depth/2, -1]) {
-				translate([sx, -sy, 0])
+				translate([x, -y, 0])
 					switch();
-				translate([-sx, -sy, 0])
+				translate([-x, -y, 0])
 					switch();
 				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
