@@ -242,7 +242,7 @@ module face() {
 					switch();
 				translate([-sx, -sy, 0])
 					switch();
-				translate([0, Depth/2-Meter_Depth*0.75-Chamfer_Size, 0])
+				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
 			}
 }
