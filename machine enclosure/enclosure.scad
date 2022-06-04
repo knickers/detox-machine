@@ -5,6 +5,7 @@ e = 0.005 + 0;
 
 Part = "Top"; // [Combined, Separated, Top, Bottom]
 Clipping_Plane = "None"; // [None, Right, Left, Front, Back]
+Tolerance = 0.1;
 
 
 /* [Enclosure] */
@@ -104,6 +105,8 @@ module top() {
 				translate([-x, 0, 0])
 					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
 			}
+
+		latches("negative");
 	}
 }
 
@@ -272,4 +275,61 @@ module face() {
 				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
 			}
+}
+
+module wedge(width, height, length) {
+	rotate(-90, [1,0,0])
+		linear_extrude(length)
+			polygon([
+				[0, 0],       // origin
+				[0, -height], // top
+				[width, 0]    // right
+			]);
+}
+
+module latches(where) {
+	width  = Latch_Depth + Tolerance * (where == "nagative" ? 1 : -1);
+	height = Latch_Depth + Tolerance * (where == "nagative" ? 1 : -1);
+	length = Latch_Width + Tolerance * (where == "nagative" ? 2 : -2);
+
+	z = Wall_Thickness - height;       // Z translation for all
+	w = Width/2 - Wall_Thickness - e;  // Width at side walls
+	d = Depth/2 - Wall_Thickness - e*3;  // Depth at ack and front walls
+
+	// Right Side Back
+	translate([w, Depth/2 - Back_Radius - Latch_Width, z])
+		wedge(width, height, length);
+	// Right Side Front
+	translate([w, -Depth/2 + Front_Radius, z])
+		wedge(width, height, length);
+	// Left Side Back
+	translate([-w, Depth/2 - Back_Radius - Latch_Width, z])
+		mirror([1,0,0])
+			wedge(width, height, length);
+	// Left Side Front
+	translate([-w, -Depth/2 + Front_Radius, z])
+		mirror([1,0,0])
+			wedge(width, height, length);
+
+	// Back Center
+	translate([length/2, d, z])
+		rotate(90, [0,0,1])
+			wedge(width, height, length);
+	// Back Left
+	translate([-Width/2+Back_Radius+length, d, z])
+		rotate(90, [0,0,1])
+			wedge(width, height, length);
+	// Back Right
+	translate([Width/2-Back_Radius-length, d, z])
+		rotate(90, [0,0,1])
+			wedge(width, height, length);
+
+	// Front Right
+	translate([Width/2-Front_Radius-length, -d, z])
+		rotate(-90, [0,0,1])
+			wedge(width, height, length);
+	// Front Left
+	translate([-Width/2+Front_Radius+length, -d, z])
+		rotate(-90, [0,0,1])
+			wedge(width, height, length);
 }
