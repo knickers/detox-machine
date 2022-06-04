@@ -6,26 +6,39 @@ e = 0.005 + 0;
 part = "Bottom"; // [Combined, Separated, Top, Bottom]
 clip = "None"; // [None, Right, Left, Front, Back]
 
-// Outer Width
-width = 140; // [50:1:200]
-
-// Outer Depth
-depth = 100; // [50:1:150]
-
-// Outer Height
-height = 40; // [10:1:100]
-
-Front_Radius = 40; // [1:1:50]
-Back_Radius = 11; // [1:1:50]
-Chamfer_Size = 10; // [0:1:30]
-Draft_Angle = 8.53; // [0:0.01:22.5]
-
-// Wall Thickness
-wall = 2; // [1:0.5:5]
+Width = 140;
+Depth = 100;
+Height = 40;
+Front_Radius = 40;
+Back_Radius = 11;
+Chamfer_Size = 10;
+Draft_Angle = 8.53;
+Wall_Thickness = 2;
 
 
-/* [Encolsure Case] */
-/* [Encolsure Bottom] */
+/* [Switch] */
+Switch_Diameter = 19.75;
+Switch_Key_Width = 2.25;
+Switch_Key_Depth = 1.25;
+Switch_Clasp_Width = 4.25;
+Switch_Clasp_Depth = 2.00;
+
+/* [Meter] */
+Meter_Width = 45.50;
+Meter_Depth = 26.50;
+Meter_Clasp_Width = 25.00;
+Meter_Clasp_Depth = 0.50;
+
+/* [Jack] */
+Jack_Diameter = 11.25;
+
+/* [Text] */
+Text_Depth = 1.00;
+Text_Height = 6.00;
+
+/* [Latch] */
+Latch_Width = 4.00;
+Latch_Depth = 1.00;
 
 
 
@@ -35,7 +48,7 @@ difference() {
 		difference() {
 			union() {
 			}
-			cube(width);
+			cube(Width);
 		}
 	}
 	else if (part == "Separated") {
@@ -48,35 +61,35 @@ difference() {
 	}
 
 	if (clip == "Right") {
-		translate([0, -depth/2-1, -1])
-			cube([width/2+1, depth+2, height+2]);
+		translate([0, -Depth/2-1, -1])
+			cube([Width/2+1, Depth+2, Height+2]);
 	}
 	else if (clip == "Left") {
-		translate([-width/2-1, -depth/2-1, -1])
-			cube([width/2+1, depth+2, height+2]);
+		translate([-Width/2-1, -Depth/2-1, -1])
+			cube([Width/2+1, Depth+2, Height+2]);
 	}
 	else if (clip == "Front") {
-		translate([-width/2-1, -depth/2-1, -1])
-			cube([width+2, depth/2+1, height+2]);
+		translate([-Width/2-1, -Depth/2-1, -1])
+			cube([Width+2, Depth/2+1, Height+2]);
 	}
 	else if (clip == "Back") {
-		translate([-width/2-1, 0, -1])
-			cube([width+2, depth/2+1, height+2]);
+		translate([-Width/2-1, 0, -1])
+			cube([Width+2, Depth/2+1, Height+2]);
 	}
 }
 
 module perimeter() {
 	hull() {
-		translate([-width/2+Back_Radius, +depth/2-Back_Radius, 0])
+		translate([-Width/2+Back_Radius, +Depth/2-Back_Radius, 0])
 			circle(Back_Radius);
 
-		translate([+width/2-Back_Radius, +depth/2-Back_Radius, 0])
+		translate([+Width/2-Back_Radius, +Depth/2-Back_Radius, 0])
 			circle(Back_Radius);
 
-		translate([-width/2+Front_Radius, -depth/2+Front_Radius, 0])
+		translate([-Width/2+Front_Radius, -Depth/2+Front_Radius, 0])
 			circle(Front_Radius);
 
-		translate([+width/2-Front_Radius, -depth/2+Front_Radius, 0])
+		translate([+Width/2-Front_Radius, -Depth/2+Front_Radius, 0])
 			circle(Front_Radius);
 	}
 }
@@ -86,25 +99,25 @@ module main_shape(height, offset=0) {
 		linear_extrude(height)
 			offset(offset)
 				perimeter();
-		translate([0, depth/2, height])
+		translate([0, Depth/2, height])
 			rotate(Draft_Angle, [1,0,0])
-				translate([0, -depth/2, height/2])
-					cube([width+2, depth*1.5, height], center=true);
+				translate([0, -Depth/2, height/2])
+					cube([Width+2, Depth*1.5, height], center=true);
 	}
 }
 
 module body(height, chamfer_size, offset=0) {
-	translate([0, depth/2, height-chamfer_size-e])
+	translate([0, Depth/2, height-chamfer_size-e])
 		rotate(Draft_Angle, [1,0,0])
-			translate([0, -depth/2, 0])
+			translate([0, -Depth/2, 0])
 				linear_extrude(chamfer_size, scale=[
-					(width-chamfer_size*2)/width,
-					(depth-chamfer_size*2)/depth
+					(Width-chamfer_size*2)/Width,
+					(Depth-chamfer_size*2)/Depth
 				])
-					translate([0, depth/2, 0])
+					translate([0, Depth/2, 0])
 						projection(cut=true)
 							rotate(-Draft_Angle, [1,0,0])
-								translate([0, -depth/2, -height+1])
+								translate([0, -Depth/2, -height+1])
 									main_shape(height, offset);
 
 	main_shape(height-chamfer_size, offset);
@@ -130,61 +143,66 @@ module arc(r1, r2) {
 }
 
 module fillet() {
-	R = wall*0.9;
+	R = Wall_Thickness*0.9;
 
 	// Right Side
-	translate([width/2-R, depth/2, R])
+	translate([Width/2-R, Depth/2, R])
 		rotate(90, [1,0,0])
-			arch(R, depth);
+			arch(R, Depth);
 
 	// Left Side
-	translate([-width/2+R, depth/2, R])
+	translate([-Width/2+R, Depth/2, R])
 		rotate(90, [1,0,0])
 			rotate(-90, [0,0,1])
-				arch(R, depth);
+				arch(R, Depth);
 
 	// Front Side
-	translate([-width/2, -depth/2+R, R])
+	translate([-Width/2, -Depth/2+R, R])
 		rotate(90, [0,1,0])
-			arch(R, width);
+			arch(R, Width);
 
 	// Back Side
-	translate([-width/2, depth/2-R, R])
+	translate([-Width/2, Depth/2-R, R])
 		rotate(90, [0,1,0])
 			rotate(90, [0,0,1])
-				arch(R, width);
+				arch(R, Width);
 
 	// Q1
-	translate([width/2-Back_Radius, depth/2-Back_Radius, R])
+	translate([Width/2-Back_Radius, Depth/2-Back_Radius, R])
 		arc(R, Back_Radius-R);
 
 	// Q2
-	translate([-width/2+Back_Radius, depth/2-Back_Radius, R])
+	translate([-Width/2+Back_Radius, Depth/2-Back_Radius, R])
 		rotate(90, [0,0,1])
 			arc(R, Back_Radius-R);
 
 	// Q3
-	translate([-width/2+Front_Radius, -depth/2+Front_Radius, R])
+	translate([-Width/2+Front_Radius, -Depth/2+Front_Radius, R])
 		rotate(180, [0,0,1])
 			arc(R, Front_Radius-R);
 
 	// Q4
-	translate([width/2-Front_Radius, -depth/2+Front_Radius, R])
+	translate([Width/2-Front_Radius, -Depth/2+Front_Radius, R])
 		rotate(-90, [0,0,1])
 			arc(R, Front_Radius-R);
 }
 
+module face() {
+	
+}
+
 module top() {
 	difference() {
-		body(height, Chamfer_Size);
-		translate([0, 0, -wall])
-			body(height, Chamfer_Size-wall*4/5, -wall);
-		fillet();
+		body(Height, Chamfer_Size);
+		translate([0, 0, -Wall_Thickness])
+			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
+		if (!$preview)
+			fillet();
 	}
 }
 
 module bottom() {
-	linear_extrude(wall)
-		offset(-wall)
+	linear_extrude(Wall_Thickness)
+		offset(-Wall_Thickness)
 			perimeter();
 }
