@@ -56,6 +56,10 @@ difference() {
 		bottom();
 	}
 	else if (Part == "Separated") {
+		translate([-Width/2 - 5, 0, 0])
+			top();
+		translate([Width/2 + 5, 0, 0])
+			bottom();
 	}
 	else if (Part == "Top") {
 		top();
@@ -105,6 +109,8 @@ module top() {
 
 		latches("negative");
 	}
+
+	supports();
 }
 
 module bottom() {
@@ -289,7 +295,6 @@ module latches(where, offset=0) {
 	width  = Latch_Depth + Tolerance * (where == "negative" ? 1 : 0);
 	height = Latch_Depth + Tolerance * (where == "negative" ? 1 : 0);
 	length = Latch_Width + Tolerance * (where == "negative" ? 2 : -2);
-	echo(where=where, width=width, height=height, length=length);
 
 	z = -height + Wall_Thickness;               // Z translation for all
 	w = Width/2 - Wall_Thickness + offset - e;  // Width at side walls
@@ -319,7 +324,7 @@ module latches(where, offset=0) {
 		rotate(90, [0,0,1])
 			wedge(width, height, length);
 	// Back Right
-	translate([Width/2-Back_Radius-length, d, z])
+	translate([Width/2-Back_Radius, d, z])
 		rotate(90, [0,0,1])
 			wedge(width, height, length);
 
@@ -328,7 +333,54 @@ module latches(where, offset=0) {
 		rotate(-90, [0,0,1])
 			wedge(width, height, length);
 	// Front Left
-	translate([-Width/2+Front_Radius+length, -d, z])
+	translate([-Width/2+Front_Radius, -d, z])
 		rotate(-90, [0,0,1])
 			wedge(width, height, length);
+}
+
+module supports() {
+	width  = Latch_Depth;
+	height = Latch_Depth;
+	length = Latch_Width * 3;
+
+	z = Wall_Thickness;               // Z translation for all
+	w = Width/2 - Wall_Thickness + e; // Width at side walls
+	d = Depth/2 - Wall_Thickness + e; // Depth at back and front walls
+
+	// Right Side Back
+	translate([w, Depth/2 - Back_Radius - length*0.75, z])
+		mirror([1,0,0])
+			wedge(width, height, length);
+	// Right Side Front
+	translate([w, -Depth/2 + Front_Radius - length, z])
+		mirror([1,0,0])
+			wedge(width, height, length*2);
+	// Left Side Back
+	translate([-w, Depth/2 - Back_Radius - length*0.75, z])
+		wedge(width, height, length);
+	// Left Side Front
+	translate([-w, -Depth/2 + Front_Radius - length, z])
+		wedge(width, height, length*2);
+
+	// Back Center
+	translate([-length/2, d, z])
+		rotate(-90, [0,0,1])
+			wedge(width, height, length);
+	// Back Left
+	translate([-Width/2+Back_Radius-length*0.25, d, z])
+		rotate(-90, [0,0,1])
+			wedge(width, height, length);
+	// Back Right
+	translate([Width/2-Back_Radius-length*0.75, d, z])
+		rotate(-90, [0,0,1])
+			wedge(width, height, length);
+
+	// Front Right
+	translate([Width/2-Front_Radius+length, -d, z])
+		rotate(90, [0,0,1])
+			wedge(width, height, length*2);
+	// Front Left
+	translate([-Width/2+Front_Radius+length, -d, z])
+		rotate(90, [0,0,1])
+			wedge(width, height, length*2);
 }
