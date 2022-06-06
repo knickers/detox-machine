@@ -52,16 +52,13 @@ Latch_Depth = 1.00;
 
 difference() {
 	if (Part == "Combined") {
-		difference() {
-			union() {
-			}
-			cube(Width);
-		}
+		top();
+		bottom();
 	}
 	else if (Part == "Separated") {
 	}
 	else if (Part == "Top") {
-			top();
+		top();
 	}
 	else if (Part == "Bottom") {
 		bottom();
@@ -112,8 +109,9 @@ module top() {
 
 module bottom() {
 	linear_extrude(Wall_Thickness)
-		offset(-Wall_Thickness)
+		offset(-Wall_Thickness-Tolerance)
 			perimeter();
+	latches("positive", -Tolerance);
 }
 
 module perimeter() {
@@ -287,14 +285,15 @@ module wedge(width, height, length) {
 			]);
 }
 
-module latches(where) {
-	width  = Latch_Depth + Tolerance * (where == "nagative" ? 1 : -1);
-	height = Latch_Depth + Tolerance * (where == "nagative" ? 1 : -1);
-	length = Latch_Width + Tolerance * (where == "nagative" ? 2 : -2);
+module latches(where, offset=0) {
+	width  = Latch_Depth + Tolerance * (where == "negative" ? 1 : 0);
+	height = Latch_Depth + Tolerance * (where == "negative" ? 1 : 0);
+	length = Latch_Width + Tolerance * (where == "negative" ? 2 : -2);
+	echo(where=where, width=width, height=height, length=length);
 
-	z = Wall_Thickness - height;       // Z translation for all
-	w = Width/2 - Wall_Thickness - e;  // Width at side walls
-	d = Depth/2 - Wall_Thickness - e*3;  // Depth at ack and front walls
+	z = -height + Wall_Thickness;               // Z translation for all
+	w = Width/2 - Wall_Thickness + offset - e;  // Width at side walls
+	d = Depth/2 - Wall_Thickness + offset - e*3;// Depth at back and front walls
 
 	// Right Side Back
 	translate([w, Depth/2 - Back_Radius - Latch_Width, z])
