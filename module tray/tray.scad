@@ -129,7 +129,7 @@ module slot_positive() {
 			[0, 0, 1,                          height-2],
 			[0, 0, 0,                          1],
 		])
-			#cube([Slot_Length+2, wall*5, 4]);
+			cube([Slot_Length+2, wall*5, 4]);
 
 		L = tan(Large_Pipe_Angle) * (height);
 
@@ -140,7 +140,7 @@ module slot_positive() {
 			[0, 0, 1,                          height-2],
 			[0, 0, 0,                          1],
 		])
-			#cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
+			cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
 
 		// Flatten the bottom of the arches
 		translate([
