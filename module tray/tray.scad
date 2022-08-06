@@ -31,6 +31,7 @@ Wing_Offset = length/2-Wing_Distance;
 Slot_Distance = 5;
 Slot_Length = 40;
 Slot_Offset = Slot_Length + Slot_Distance - width/2;
+Slot_Height = 2;
 
 Wire_Size = 2.1;
 
@@ -77,8 +78,8 @@ module slot_plug() {
 			rotate(90, [1,0,0])
 				linear_extrude(wall)
 					polygon([
-						[w-s, height+1], // Q1
-						[0-l, height+1], // Q2
+						[w-s, height+Slot_Height], // Q1
+						[0-l, height+Slot_Height], // Q2
 						[0, 0], // Q3
 						[w, 0]  // Q4
 					]);
@@ -116,30 +117,30 @@ module slot_positive() {
 		}
 
 		// Level off the top
-		translate([Slot_Distance-width/2-1, 0, height+1])
+		translate([Slot_Distance-width/2-1, 0, height+Slot_Height])
 			cube([Slot_Length+2, length/2, large ]);
 
-		l = tan(Small_Pipe_Angle) * (height-1.5);
+		l = tan(Small_Pipe_Angle) * (height);
 
 		// Cut off the top outside corner
 		multmatrix(m=[
 			[1, 0, 0,                          Slot_Distance-width/2-1],
-			[0, 1, -cos(Small_Pipe_Angle*1.5), length/2-Wing_Distance-l+1],
+			[0, 1, -cos(Small_Pipe_Angle*2.3), length/2-Wing_Distance-l+1],
 			[0, 0, 1,                          height-2],
 			[0, 0, 0,                          1],
 		])
-			cube([Slot_Length+2, wall*5, 4]);
+			#cube([Slot_Length+2, wall*5, 4]);
 
-		L = tan(Large_Pipe_Angle) * (height-1.5);
+		L = tan(Large_Pipe_Angle) * (height);
 
 		// Cut off the top inside corner
 		multmatrix(m=[
 			[1, 0, 0,                          Slot_Distance-width/2-1],
-			[0, 1, -cos(Small_Pipe_Angle*1.5), length/2-Wing_Distance-Wing_Separation-Pipe_Wall_Thickness*5.2-L+1],
+			[0, 1, -cos(Large_Pipe_Angle*2.4), length/2-Wing_Distance-Wing_Separation-Pipe_Wall_Thickness*4.9-L+1],
 			[0, 0, 1,                          height-2],
 			[0, 0, 0,                          1],
 		])
-			cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
+			#cube([Slot_Length+2, Pipe_Wall_Thickness*4, 4]);
 
 		// Flatten the bottom of the arches
 		translate([
