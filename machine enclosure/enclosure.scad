@@ -43,6 +43,11 @@ Text_Depth = 1.00;
 Text_Height = 6.00;
 
 
+/* [Symbol] */
+Symbol_Depth = 1.00;
+Symbol_Height = 10.00;
+
+
 /* [Latch] */
 Latch_Width = 4.00;
 Latch_Depth = 1.00;
@@ -90,10 +95,10 @@ module top() {
 	difference() {
 		body(Height, Chamfer_Size);
 		translate([0, 0, -Wall_Thickness])
-			body(Height, Chamfer_Size-Wall_Thickness*4/5, -Wall_Thickness);
+			body(Height, Chamfer_Size-Wall_Thickness*2/5, -Wall_Thickness);
 
 		if (!$preview)
-			fillet();
+			fillet(); // Around the bottom perimeter
 
 		face();
 
@@ -137,6 +142,7 @@ module perimeter() {
 }
 
 module body(height, chamfer_size, offset=0) {
+	// Main, top face, with chamfer
 	translate([0, Depth/2, height-chamfer_size-e])
 		rotate(Draft_Angle, [1,0,0])
 			translate([0, -Depth/2, 0])
@@ -153,9 +159,12 @@ module body(height, chamfer_size, offset=0) {
 											perimeter();
 
 	difference() {
+		// Wall of body
 		linear_extrude(height-chamfer_size)
 			offset(offset)
 				perimeter();
+
+		// Cut off the top at draft_angle
 		translate([0, Depth/2, height-chamfer_size])
 			rotate(Draft_Angle, [1,0,0])
 				translate([0, -Depth/2, chamfer_size])
@@ -265,17 +274,26 @@ module meter() {
 		]);
 }
 
+module power_symbol() {
+	translate([-Symbol_Height*177/200/2, -0.09, -Symbol_Depth])
+		linear_extrude(Symbol_Depth+1)
+			scale(Symbol_Height / 53.1)
+				import("IEC5009_Standby_Symbol.svg", convexity=6); // 177x200
+}
+
 module face() {
 	x = Width/2 - Wall_Thickness - Front_Radius*0.75;
-	y = Depth/2 + Wall_Thickness - Front_Radius;
+	y = Depth/2 + Wall_Thickness - Front_Radius*0.8;
 
 	translate([0, Depth/2, Height-Wall_Thickness])
 		rotate(Draft_Angle, [1,0,0])
 			translate([0, -Depth/2, -1]) {
-				translate([x, -y, 0])
+				translate([x, -y, 0]) // Right Switch
 					switch();
-				translate([-x, -y, 0])
+				translate([-x, -y, 0]) // Left Switch
 					switch();
+				translate([-x, -y+Switch_Diameter-3, Wall_Thickness+1])
+					power_symbol();
 				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
 			}
