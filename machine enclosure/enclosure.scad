@@ -298,7 +298,7 @@ module face() {
 }
 
 module back() {
-	x = Width/4 - Back_Radius/2;
+	x = Width/3 - Back_Radius/2;
 	w_ion = 52/6; // "ION MODULE" is 52 mm wide when Text_Height is 6
 	w_pwr = 62/6; // "POWER 15 VDC" is 62 mm wide when Text_Height is 6
 
