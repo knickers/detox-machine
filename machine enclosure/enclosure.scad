@@ -40,7 +40,7 @@ Jack_Diameter = 11.25;
 
 /* [Text] */
 Text_Depth = 1.00;
-Text_Height = 6.00;
+Text_Height = 5.00;
 
 
 /* [Symbol] */
@@ -103,15 +103,7 @@ module top() {
 
 		face();
 
-		// Jacks
-		x = Width/4 - Back_Radius/2;
-		translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
-			rotate(90, [1,0,0]) {
-				translate([x, 0, 0])
-					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
-				translate([-x, 0, 0])
-					cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
-			}
+		back();
 
 		latches("negative");
 	}
@@ -302,6 +294,30 @@ module face() {
 				translate([0, -y-Switch_Diameter, Wall_Thickness+1])
 					symbol("../logo-phoenix-health-2mm-paths-union.svg", 446.422, 497.29, Logo_Height);
 			}
+}
+
+module back() {
+	x = Width/4 - Back_Radius/2;
+	w_ion = 52/6; // "ION MODULE" is 52 mm wide when Text_Height is 6
+	w_pwr = 62/6; // "POWER 15 VDC" is 62 mm wide when Text_Height is 6
+
+	translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
+		rotate(90, [1,0,0]) {
+			translate([x, 0, 0])
+				cylinder(d=Jack_Diameter, h=Wall_Thickness+2); // Right Jack
+			translate([-x, 0, 0])
+				cylinder(d=Jack_Diameter, h=Wall_Thickness+2); // Left Jack
+
+			translate([Width/2-Back_Radius, Jack_Diameter/2+2, Text_Depth+1])
+				rotate(180, [0, 1, 0])
+					linear_extrude(Text_Depth+1)
+						#text("ION MODULE", size=Text_Height);
+
+			translate([-Width/2+Back_Radius+Text_Height*w_pwr, Jack_Diameter/2+2, Text_Depth+1])
+				rotate(180, [0, 1, 0])
+					linear_extrude(Text_Depth+1)
+						#text("POWER 15 VDC", size=Text_Height);
+		}
 }
 
 module wedge(width, height, length) {
