@@ -46,7 +46,7 @@ Text_Height = 6.00;
 /* [Symbol] */
 Symbol_Depth = 1.00;
 Symbol_Height = 15.00;
-Logo_Height = 40;
+Logo_Height = 42;
 
 
 /* [Latch] */
