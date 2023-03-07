@@ -379,8 +379,8 @@ module latches(where, offset=0) {
 }
 
 module supports() {
-	width  = Latch_Depth;
-	height = Latch_Depth;
+	width  = Latch_Depth * 2;
+	height = Latch_Depth * 2;
 	length = Latch_Width * 3;
 
 	z = Wall_Thickness;               // Z translation for all
