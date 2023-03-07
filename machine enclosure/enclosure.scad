@@ -274,11 +274,11 @@ module meter() {
 		]);
 }
 
-module power_symbol() {
-	translate([-Symbol_Height*177/200/2, -0.09, -Symbol_Depth])
+module symbol(file_name, svg_width, svg_height, size=Symbol_Height) {
+	translate([-size * svg_width / svg_height / 2, 0, -Symbol_Depth])
 		linear_extrude(Symbol_Depth+1)
-			scale(Symbol_Height / 53.1)
-				import("IEC5009_Standby_Symbol.svg", convexity=6); // 177x200
+			scale(size / svg_height)
+				import(file_name, convexity=6);
 }
 
 module face() {
@@ -288,14 +288,16 @@ module face() {
 	translate([0, Depth/2, Height-Wall_Thickness])
 		rotate(Draft_Angle, [1,0,0])
 			translate([0, -Depth/2, -1]) {
-				translate([x, -y, 0]) // Right Switch
-					switch();
-				translate([-x, -y, 0]) // Left Switch
-					switch();
-				translate([-x, -y+Switch_Diameter-3, Wall_Thickness+1])
-					power_symbol();
 				translate([0, Depth/2-Meter_Depth/2-Chamfer_Size*1.75, 0])
 					meter();
+				translate([-x, -y, 0]) // Left Switch
+					switch();
+				translate([x, -y, 0]) // Right Switch
+					switch();
+				translate([-x, -y+Switch_Diameter-3, Wall_Thickness+1])
+					symbol("symbol-standby.svg", 46.408, 53.102);
+				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
+					symbol("symbol-plus-minus.svg", 70.556, 97.639);
 			}
 }
 
