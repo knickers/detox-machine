@@ -298,6 +298,8 @@ module face() {
 					symbol("symbol-standby.svg", 46.408, 53.102);
 				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
 					symbol("symbol-plus-minus.svg", 70.556, 97.639);
+				translate([0, -y-Switch_Diameter, Wall_Thickness+1])
+					symbol("../logo-phoenix-health-2mm-paths-union.svg", 446.422, 497.29, 40);
 			}
 }
 
