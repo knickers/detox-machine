@@ -1,5 +1,5 @@
 // Resolution
-$fs = 2; // [1:High, 2:Medium, 4:Low]
+$fs = $preview ? 4 : 1; //2; // [1:High, 2:Medium, 4:Low]
 $fa = 0.01 + 0;
 e = 0.005 + 0;
 
