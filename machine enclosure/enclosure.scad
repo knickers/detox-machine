@@ -17,6 +17,7 @@ Back_Radius = 11;
 Chamfer_Size = 10;
 Draft_Angle = 8.53;
 Wall_Thickness = 2;
+Floor_Thickness = 3;
 
 
 /* [Switch] */
@@ -51,7 +52,7 @@ Logo_Height = 42;
 
 /* [Latch] */
 Latch_Width = 4.00;
-Latch_Depth = 1.00;
+Latch_Depth = 1.75;
 
 
 
@@ -113,7 +114,7 @@ module top() {
 }
 
 module bottom() {
-	linear_extrude(Wall_Thickness)
+	linear_extrude(Floor_Thickness)
 		offset(-Wall_Thickness-Tolerance)
 			perimeter();
 	latches("positive", -Tolerance);
@@ -337,9 +338,9 @@ module latches(where, offset=0) {
 	height = Latch_Depth + Tolerance * (where == "negative" ? 1 : 0);
 	length = Latch_Width + Tolerance * (where == "negative" ? 2 : -2);
 
-	z = -height + Wall_Thickness;               // Z translation for all
+	z = -height + Floor_Thickness;               // Z translation for all
 	w = Width/2 - Wall_Thickness + offset - e;  // Width at side walls
-	d = Depth/2 - Wall_Thickness + offset - e*3;// Depth at back and front walls
+	d = Depth/2 - Wall_Thickness + offset - e*3;// Depth at back and front wall
 
 	// Right Side Back
 	translate([w, Depth/2 - Back_Radius - Latch_Width, z])
@@ -380,11 +381,11 @@ module latches(where, offset=0) {
 }
 
 module supports() {
-	width  = Latch_Depth * 2;
-	height = Latch_Depth * 2;
+	width  = Latch_Depth * 1.5;
+	height = Latch_Depth * 1.5;
 	length = Latch_Width * 3;
 
-	z = Wall_Thickness;               // Z translation for all
+	z = Floor_Thickness;               // Z translation for all
 	w = Width/2 - Wall_Thickness + e; // Width at side walls
 	d = Depth/2 - Wall_Thickness + e; // Depth at back and front walls
 
