@@ -75,21 +75,23 @@ difference() {
 		bottom();
 	}
 
-	if (Clipping_Plane == "Right") {
-		translate([0, -Depth/2-1, -1])
-			cube([Width/2+1, Depth+2, Height+2]);
-	}
-	else if (Clipping_Plane == "Left") {
-		translate([-Width/2-1, -Depth/2-1, -1])
-			cube([Width/2+1, Depth+2, Height+2]);
-	}
-	else if (Clipping_Plane == "Front") {
-		translate([-Width/2-1, -Depth/2-1, -1])
-			cube([Width+2, Depth/2+1, Height+2]);
-	}
-	else if (Clipping_Plane == "Back") {
-		translate([-Width/2-1, 0, -1])
-			cube([Width+2, Depth/2+1, Height+2]);
+	if ($preview) {
+		if (Clipping_Plane == "Right") {
+			translate([0, -Depth/2-1, -1])
+				cube([Width/2+1, Depth+2, Height+2]);
+		}
+		else if (Clipping_Plane == "Left") {
+			translate([-Width/2-1, -Depth/2-1, -1])
+				cube([Width/2+1, Depth+2, Height+2]);
+		}
+		else if (Clipping_Plane == "Front") {
+			translate([-Width/2-1, -Depth/2-1, -1])
+				cube([Width+2, Depth/2+1, Height+2]);
+		}
+		else if (Clipping_Plane == "Back") {
+			translate([-Width/2-1, 0, -1])
+				cube([Width+2, Depth/2+1, Height+2]);
+		}
 	}
 }
 
