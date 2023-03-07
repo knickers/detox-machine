@@ -45,7 +45,8 @@ Text_Height = 6.00;
 
 /* [Symbol] */
 Symbol_Depth = 1.00;
-Symbol_Height = 10.00;
+Symbol_Height = 15.00;
+Logo_Height = 40;
 
 
 /* [Latch] */
@@ -299,7 +300,7 @@ module face() {
 				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
 					symbol("symbol-plus-minus.svg", 70.556, 97.639);
 				translate([0, -y-Switch_Diameter, Wall_Thickness+1])
-					symbol("../logo-phoenix-health-2mm-paths-union.svg", 446.422, 497.29, 40);
+					symbol("../logo-phoenix-health-2mm-paths-union.svg", 446.422, 497.29, Logo_Height);
 			}
 }
 
