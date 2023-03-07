@@ -95,7 +95,8 @@ difference() {
 module top() {
 	difference() {
 		body(Height, Chamfer_Size);
-		translate([0, 0, -Wall_Thickness])
+
+		translate([0, 0, -Wall_Thickness/cos(Draft_Angle)])
 			body(Height, Chamfer_Size-Wall_Thickness*2/5, -Wall_Thickness);
 
 		if (!$preview)
