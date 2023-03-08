@@ -6,6 +6,7 @@ e = 0.005 + 0;
 Part = "Top"; // [Combined, Separated, Top, Bottom]
 Clipping_Plane = "None"; // [None, Right, Left, Front, Back]
 Tolerance = 0.1;
+Show_Logo = false;
 
 
 /* [Enclosure] */
@@ -15,28 +16,28 @@ Height = 40;
 Front_Radius = 40;
 Back_Radius = 11;
 Chamfer_Size = 10;
-Draft_Angle = 8.53;
+Draft_Angle = 8.53; // .01
 Wall_Thickness = 2;
 Floor_Thickness = 3;
 
 
 /* [Switch] */
-Switch_Diameter = 19.75;
-Switch_Key_Width = 2.25;
-Switch_Key_Depth = 1.25;
-Switch_Clasp_Width = 4.25;
-Switch_Clasp_Depth = 2.00;
+Switch_Diameter = 19.75; // .05
+Switch_Key_Width = 2.25; // .05
+Switch_Key_Depth = 1.25; // .05
+Switch_Clasp_Width = 4.25; // .05
+Switch_Clasp_Depth = 2.00; // .05
 
 
 /* [Meter] */
-Meter_Width = 45.50;
-Meter_Depth = 26.50;
-Meter_Clasp_Width = 25.00;
-Meter_Clasp_Depth = 0.50;
+Meter_Width = 45.50; // .05
+Meter_Depth = 26.50; // .05
+Meter_Clasp_Width = 25.00; // .05
+Meter_Clasp_Depth = 0.50; // .05
 
 
 /* [Jack] */
-Jack_Diameter = 11.25;
+Jack_Diameter = 11.25; // .05
 
 
 /* [Text] */
@@ -52,7 +53,7 @@ Logo_Height = 42;
 
 /* [Latch] */
 Latch_Width = 4.00;
-Latch_Depth = 1.75;
+Latch_Depth = 1.60; // .05
 
 
 
@@ -295,9 +296,9 @@ module face() {
 					symbol("symbol-standby.svg", 46.408, 53.102);
 				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
 					symbol("symbol-plus-minus.svg", 70.556, 97.639);
-				if (!$preview)
+				if (!$preview || Show_Logo)
 					translate([0, -y-Switch_Diameter, Wall_Thickness+1])
-						symbol("../logo-phoenix-health-2mm-paths-union.svg", 446.422, 497.29, Logo_Height);
+						symbol("../logo-phoenix-health-2mm.svg", 446.422, 497.29, Logo_Height);
 			}
 }
 
@@ -316,12 +317,12 @@ module back() {
 			translate([Width/2-Back_Radius, Jack_Diameter/2+2, Text_Depth+1])
 				rotate(180, [0, 1, 0])
 					linear_extrude(Text_Depth+1)
-						#text("ION MODULE", size=Text_Height);
+						text("ION MODULE", size=Text_Height);
 
 			translate([-Width/2+Back_Radius+Text_Height*w_pwr, Jack_Diameter/2+2, Text_Depth+1])
 				rotate(180, [0, 1, 0])
 					linear_extrude(Text_Depth+1)
-						#text("POWER 15 VDC", size=Text_Height);
+						text("POWER 15 VDC", size=Text_Height);
 		}
 }
 
