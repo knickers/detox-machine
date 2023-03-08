@@ -6,7 +6,6 @@ e = 0.005 + 0;
 Part = "Top"; // [Combined, Separated, Top, Bottom]
 Clipping_Plane = "None"; // [None, Right, Left, Front, Back]
 Tolerance = 0.1;
-Show_Logo = false;
 
 
 /* [Enclosure] */
@@ -49,6 +48,8 @@ Text_Height = 5.00;
 Symbol_Depth = 1.00;
 Symbol_Height = 15.00;
 Logo_Height = 42;
+// Always rendered in final output
+Show_Logo_In_Preview = false;
 
 
 /* [Latch] */
@@ -296,9 +297,9 @@ module face() {
 					symbol("symbol-standby.svg", 46.408, 53.102);
 				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
 					symbol("symbol-plus-minus.svg", 70.556, 97.639);
-				if (!$preview || Show_Logo)
+				if (!$preview || Show_Logo_In_Preview)
 					translate([0, -y-Switch_Diameter, Wall_Thickness+1])
-						symbol("../logo-phoenix-health-2mm.svg", 446.422, 497.29, Logo_Height);
+						symbol("logo-phoenix-health-2mm.svg", 446.422, 497.29, Logo_Height);
 			}
 }
 
