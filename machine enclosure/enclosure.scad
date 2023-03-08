@@ -42,9 +42,9 @@ Jack_Diameter = 11.25; // .05
 /* [Text] */
 Text_Depth = 1.00;
 Text_Height = 5.00;
-
-
-/* [Symbol] */
+Text_Align = "Center"; // [Center, Outside]
+Left_Text = "Array";
+Right_Text = "Power";
 Symbol_Depth = 1.00;
 Symbol_Height = 15.00;
 Logo_Height = 42;
@@ -305,25 +305,35 @@ module face() {
 
 module back() {
 	x = Width/3 - Back_Radius/2;
-	w_ion = 52/6; // "ION MODULE" is 52 mm wide when Text_Height is 6
-	w_pwr = 62/6; // "POWER 15 VDC" is 62 mm wide when Text_Height is 6
+	p = Text_Align == "Center" ? x : Width/2-Back_Radius;
 
 	translate([0, Depth/2+1, Height/2-Chamfer_Size/2])
 		rotate(90, [1,0,0]) {
+			// Right Jack
 			translate([x, 0, 0])
-				cylinder(d=Jack_Diameter, h=Wall_Thickness+2); // Right Jack
+				cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
+
+			// Left Jack
 			translate([-x, 0, 0])
-				cylinder(d=Jack_Diameter, h=Wall_Thickness+2); // Left Jack
+				cylinder(d=Jack_Diameter, h=Wall_Thickness+2);
 
-			translate([Width/2-Back_Radius, Jack_Diameter/2+2, Text_Depth+1])
+			// Left Text
+			translate([p, Jack_Diameter/2+2, Text_Depth+1])
 				rotate(180, [0, 1, 0])
 					linear_extrude(Text_Depth+1)
-						text("ION MODULE", size=Text_Height);
+						text(Left_Text,
+							size=Text_Height,
+							halign=Text_Align=="Center"?"center":"left"
+						);
 
-			translate([-Width/2+Back_Radius+Text_Height*w_pwr, Jack_Diameter/2+2, Text_Depth+1])
+			// Right Text
+			translate([-p, Jack_Diameter/2+2, Text_Depth+1])
 				rotate(180, [0, 1, 0])
 					linear_extrude(Text_Depth+1)
-						text("POWER 15 VDC", size=Text_Height);
+						text(Right_Text,
+							size=Text_Height,
+							halign=Text_Align=="Center"?"center":"right"
+						);
 		}
 }
 
