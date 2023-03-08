@@ -299,7 +299,7 @@ module face() {
 				translate([-x, -y+Switch_Diameter-3, Wall_Thickness+1])
 					symbol("symbol-standby.svg", 46.408, 53.102);
 				translate([x, -y+Switch_Diameter-3, Wall_Thickness+1])
-					symbol("symbol-plus-minus.svg", 70.556, 97.639);
+					symbol("symbol-polarity.svg", 70.556, 97.639);
 				if (!$preview || Show_Logo_In_Preview)
 					translate([0, -y-Switch_Diameter, Wall_Thickness+1])
 						symbol("logo-phoenix-health-2mm.svg", 446.422, 497.29, Logo_Height);
