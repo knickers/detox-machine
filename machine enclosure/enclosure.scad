@@ -67,14 +67,17 @@ difference() {
 	else if (Part == "Separated") {
 		translate([-Width/2 - 5, 0, 0])
 			top();
-		translate([Width/2 + 5, 0, 0])
-			bottom();
+		translate([Width/2 + 5, 0, Floor_Thickness])
+			mirror([0, 0, 1])
+				bottom();
 	}
 	else if (Part == "Top") {
 		top();
 	}
 	else if (Part == "Bottom") {
-		bottom();
+		translate([0, 0, Floor_Thickness])
+			mirror([0, 0, 1])
+				bottom();
 	}
 
 	if ($preview) {
