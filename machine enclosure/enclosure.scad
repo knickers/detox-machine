@@ -302,7 +302,7 @@ module face() {
 					symbol("symbol-polarity.svg", 70.556, 97.639);
 				if (!$preview || Show_Logo_In_Preview)
 					translate([0, -y-Switch_Diameter, Wall_Thickness+1])
-						symbol("logo-phoenix-health-2mm.svg", 446.422, 497.29, Logo_Height);
+						symbol("logo-phoenix-health.svg", 446.422, 497.29, Logo_Height);
 			}
 }
 
